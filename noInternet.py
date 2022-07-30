@@ -51,7 +51,32 @@ class Dinosaur(object):
                 self.jump_increment = 0
                 self.jumping = False
 
+class Cactus(object):
+    def __init__(self):
+        # large cactus and small cactus
+        if random.randint(1, 2) == 1:
+            self.w = 25
+            self.h = 50
+            self.big = True
+        else:
+            self.w = 48
+            self.h = 25
+            self.big = False
+
+        self.y = (screenHeight - 100) - self.h
+        self.x = screenLength
+    
+    def draw(self):
+        pygame.draw.rect(win, (0,0,0), (self.x, self.y, self.w, self.h))
+
+    def hit(self):
+        if pygame.Rect(self.x, self.y, self.w, self.h).colliderect(pygame.Rect(player.x, player.y, player.w, player.h)):
+            return True
+        return False
+
 player = Dinosaur() # create dinosaur object
+enemies = []
+inc = 0
 
 run = True
 while run:
@@ -61,7 +86,21 @@ while run:
         # allows user to close window
         if event.type == pygame.QUIT:
             run = False
+    
+    # spawns cactus every 100 increment
+    inc += 1
+    if inc == 100:
+        enemies.append(Cactus())
+        inc = 0
 
+    # moves the cactus across the screen
+    for enemy in enemies:
+        enemy.x -= 5
+        enemy.draw()
+
+        if enemy.hit():
+            run = False
+        
     player.draw()
     player.move()
 
