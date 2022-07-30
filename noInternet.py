@@ -69,6 +69,7 @@ class Cactus(object):
     def draw(self):
         pygame.draw.rect(win, (0,0,0), (self.x, self.y, self.w, self.h))
 
+    # detects collision
     def hit(self):
         if pygame.Rect(self.x, self.y, self.w, self.h).colliderect(pygame.Rect(player.x, player.y, player.w, player.h)):
             return True
@@ -77,6 +78,9 @@ class Cactus(object):
 player = Dinosaur() # create dinosaur object
 enemies = []
 inc = 0
+gameSpeed = 1
+score = 0
+scoreIncrement = 0
 
 run = True
 while run:
@@ -88,14 +92,22 @@ while run:
             run = False
     
     # spawns cactus every 100 increment
-    inc += 1
-    if inc == 100:
+    inc += 1 * gameSpeed # spawn enemy closer together for difficulty
+    if inc >= 100:
         enemies.append(Cactus())
         inc = 0
+        gameSpeed += 0.1
 
+    # make score increase faster as difficulty increases
+    if scoreIncrement <= 5:
+        scoreIncrement += 1 * gameSpeed
+    else:
+        scoreIncrement = 0
+        score += 1
+        
     # moves the cactus across the screen
     for enemy in enemies:
-        enemy.x -= 5
+        enemy.x -= 5 * gameSpeed # make enemy move fastr for difficulty
         enemy.draw()
 
         if enemy.hit():
@@ -103,6 +115,11 @@ while run:
         
     player.draw()
     player.move()
+
+    # display score
+    font = pygame.font.SysFont("Poppins", 50)
+    text = font.render(str(score), 1, (0,0,0))
+    win.blit(text, (screenLength - text.get_width() - 10, 10))
 
     clock.tick(30) # 30 fps
     pygame.display.update()
