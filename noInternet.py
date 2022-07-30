@@ -19,6 +19,7 @@ class Dinosaur(object):
         self.y = screenHeight - 150
         self.jumping = False
         self.jump_increment = 0
+        self.crouching = False
 
     def draw(self):
         pygame.draw.rect(win, (125,125,125), (self.x, self.y, self.w, self.h))
@@ -26,8 +27,21 @@ class Dinosaur(object):
     def move(self):
         keys = pygame.key.get_pressed()
 
-        if (keys[pygame.K_UP] or keys[pygame.K_SPACE]) and not self.jumping: # detects jumping
+        # detects jumping, no jumping out of crouching
+        if (keys[pygame.K_UP] or keys[pygame.K_SPACE]) and not self.jumping and not self.crouching: 
             self.jumping = True
+
+        # detects crouching, no crouching out of jumping
+        if (keys[pygame.K_DOWN]) and not self.jumping:
+            self.crouching = True
+            self.w = 50
+            self.h = 25
+            self.y = screenHeight - 125
+        elif not self.jumping:
+            self.crouching = False
+            self.y = screenHeight - 150
+            self.w = 35
+            self.h = 50
 
         if self.jumping: # parabolic jump
             if self.jump_increment <= 20:
