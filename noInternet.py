@@ -114,6 +114,8 @@ score = 0
 scoreIncrement = 0
 
 run = True
+end = True
+
 while run:
     win.fill((255,255,255)) # fill window to white
     pygame.draw.rect(win, (0,0,0), (0, screenHeight-110, screenLength, 1))
@@ -121,6 +123,7 @@ while run:
         # allows user to close window
         if event.type == pygame.QUIT:
             run = False
+            end = False
     
     # spawns cactus every 100 increment
     inc += 1 * gameSpeed # spawn enemy closer together for difficulty
@@ -148,13 +151,31 @@ while run:
     player.move()
 
     # display score
-    font = pygame.font.SysFont("poppins", 50)
+    font = pygame.font.SysFont("arial", 25)
     text = font.render(str(score), 1, (0,0,0))
-    win.blit(text, (screenLength - text.get_width() - 10, 10))
+    win.blit(text, (screenLength - text.get_width() - 20, 15))
 
     clock.tick(30) # 30 fps
     pygame.display.update()
 
+while end:
+    win.fill((0,0,0))
+
+    for event in pygame.event.get():
+        # allows user to close window
+        if event.type == pygame.QUIT:
+            end = False
+
+    font = pygame.font.SysFont("arial", 25)
+    finalScore = font.render("Your score: " + str(score), 1, (255,255,255))
+    exitScreen = font.render("Click anywhere to exit", 1, (255, 255, 255))
+    win.blit(finalScore, (screenLength/2 - finalScore.get_width()/2, screenHeight * 1/3 + 15))
+    win.blit(exitScreen, (screenLength/2 - exitScreen.get_width()/2, screenHeight * 2/5 + 20))
+
+    if pygame.mouse.get_pressed()[0]:
+        end = False
+
+    pygame.display.update()
 
 pygame.quit()
 
