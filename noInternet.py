@@ -106,6 +106,27 @@ class Cactus(object):
             return True
         return False
 
+class Bird(object):
+    def __init__(self):
+        self.w = 50
+        self.h = 25
+        self.y = (screenHeight-100) - (self.h + 10) * random.randint(1,3)
+        self.x = screenLength
+        self.flying = [pygame.image.load("bird1.png"), pygame.image.load("bird2.png")]
+        self.fly_inc = 0
+
+    def draw(self):
+        win.blit(self.flying[self.fly_inc//10], (self.x, self.y))
+
+        if self.fly_inc == 19:
+            self.fly_inc = -1
+        self.fly_inc +=1 
+
+    def hit(self):
+        if pygame.Rect(self.x, self.y, self.w, self.h).colliderect(pygame.Rect(player.x, player.y, player.w, player.h)):
+            return True
+        return False
+
 player = Dinosaur() # create dinosaur object
 enemies = []
 inc = 0
@@ -128,7 +149,10 @@ while run:
     # spawns cactus every 100 increment
     inc += 1 * gameSpeed # spawn enemy closer together for difficulty
     if inc >= 100:
-        enemies.append(Cactus())
+        if random.randint(1,2) == 1 and score >= 100:
+            enemies.append(Bird())
+        else:
+            enemies.append(Cactus())
         inc = 0
         gameSpeed += 0.1
 
@@ -146,6 +170,9 @@ while run:
 
         if enemy.hit():
             run = False
+        
+        if enemy.x + enemy.w == 0:
+            enemies.remove(enemy)
         
     player.draw()
     player.move()
